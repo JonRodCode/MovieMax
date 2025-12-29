@@ -1,7 +1,6 @@
 ﻿using maxi_movie.mvc.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
 
 namespace maxi_movie.mvc.Data
 {
@@ -11,7 +10,12 @@ namespace maxi_movie.mvc.Data
             : base(options)
         {
         }
-        //public DbSet<Pelicula> Peliculas { get; set; }
+
+        public DbSet<Pelicula> Peliculas { get; set; }
+        public DbSet<Genero> Generos { get; set; }
+        public DbSet<Plataforma> Plataformas { get; set; }
+        public DbSet<Favorito> Favoritos { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
     }
 }
