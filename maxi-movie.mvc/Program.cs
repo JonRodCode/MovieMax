@@ -1,6 +1,7 @@
 using maxi_movie.mvc.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,15 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
 
 
 var app = builder.Build();
+
+//invocar la ejecucion dek dbseeder con un using scope
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MovieDbContext>();
+
+    await DbSeeder.Seed(context);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
