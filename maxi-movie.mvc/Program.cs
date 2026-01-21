@@ -2,15 +2,45 @@ using maxi_movie.mvc.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using maxi_movie.mvc.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+// Incluir dbContext
 builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieDbContext")));
 
+// Incluir Identity
+
+builder.Services.AddIdentityCore<Usuario>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 3;
+})
+    .AddEntityFrameworkStores<MovieDbContext>()
+    .AddRoles<IdentityRole>()
+    .AddSignInManager();
+
+//Manejo de la cookie. Lo ponemos en default, pero hay que ponerlo.
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultScheme = IdentityConstants.ApplicationScheme;
+})
+.AddIdentityCookies();
+
+builder.Services.ConfigureApplicationCookie(o =>
+{
+    o.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    o.SlidingExpiration = true;
+    o.LoginPath = "/Usuario/Login";
+    o.AccessDeniedPath = "/Usuario/AccessDenied";
+});
 
 var app = builder.Build();
 

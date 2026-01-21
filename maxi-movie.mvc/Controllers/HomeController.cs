@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using maxi_movie.mvc.Data;
 using maxi_movie.mvc.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace maxi_movie.mvc.Controllers
 {
@@ -10,6 +11,7 @@ namespace maxi_movie.mvc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MovieDbContext _context;
+        private const int PageSize = 8;
 
         public HomeController(ILogger<HomeController> logger, MovieDbContext context)
         {
@@ -17,10 +19,56 @@ namespace maxi_movie.mvc.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1, string txtBusqueda = "", int generoId = 0)
         {
-            var peliculas = await _context.Peliculas.ToListAsync();
+            if (pagina < 1) pagina = 1;
+
+            var consulta = _context.Peliculas.AsQueryable();
+            if (!string.IsNullOrEmpty(txtBusqueda))
+            {
+                consulta = consulta.Where(p => p.Titulo.Contains(txtBusqueda));
+            }
+
+            if (generoId > 0)
+            {
+                consulta = consulta.Where(p => p.GeneroId == generoId);
+            }
+
+            var totalPeliculas = await consulta.CountAsync();
+            var totalPaginas = (int)Math.Ceiling(totalPeliculas / (double)PageSize);
+
+            if (pagina > totalPaginas && totalPaginas > 0) pagina = totalPaginas;
+
+            var peliculas = await consulta
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalPeliculas = totalPeliculas;
+            ViewBag.TxtBusqueda = txtBusqueda;
+
+            var generos = await _context.Generos.OrderBy(g => g.Descripcion).ToListAsync();
+            generos.Insert(0, new Genero { Id = 0, Descripcion = "Género" });
+
+            ViewBag.GeneroId = new SelectList(
+                generos,
+                "Id",
+                "Descripcion",
+                generoId
+            );
+
             return View(peliculas);
+        }
+
+        public IActionResult Details(int Id)
+        {
+            var pelicula = _context.Peliculas
+                .Include(p => p.Genero)
+                .FirstOrDefault(p => p.Id == Id);
+
+            return View(pelicula);
         }
 
         public IActionResult Privacy()
