@@ -18,13 +18,13 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
 
 builder.Services.AddIdentityCore<Usuario>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 3;
 })
-    .AddEntityFrameworkStores<MovieDbContext>()
     .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<MovieDbContext>()
     .AddSignInManager();
 
 //Manejo de la cookie. Lo ponemos en default, pero hay que ponerlo.
