@@ -49,4 +49,13 @@ namespace maxi_movie.mvc.Models
         public string Clave { get; set; }
         public bool Recordarme { get; set; }
     }
+
+    public class MiPerfilViewModel
+    {
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string? Email { get; set; }
+        public IFormFile? ImagenPerfil { get; set; }
+        public string? ImagenUrlPerfil { get; set; }
+    }
 }
