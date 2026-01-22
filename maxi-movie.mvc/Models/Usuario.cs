@@ -21,17 +21,21 @@ namespace maxi_movie.mvc.Models
     
     public class RegistroViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Debes ingresar un nombre.")]
         [StringLength(50)]
         public string Nombre { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Debes ingresar un apellido.")]
         [StringLength(50)]
         public string Apellido { get; set; }
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Ingresa un email válido.")]
+        [Required(ErrorMessage = "La clave es obligatoria.")]
         public string Email { get; set; }
-        [PasswordPropertyText]
+        [Required(ErrorMessage = "La clave es obligatoria.")]
+        [DataType(DataType.Password)]
         public string Clave { get; set; }
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
+        [Required(ErrorMessage = "La clave es obligatoria.")]
+        [Compare("Clave", ErrorMessage ="Las claves no coinciden.")]
         public string ConfirmarClave { get; set; }
     }
 
@@ -40,7 +44,7 @@ namespace maxi_movie.mvc.Models
         [EmailAddress(ErrorMessage = "Ingresa un email válido.")]
         [Required(ErrorMessage = "La clave es obligatoria.")]
         public string Email { get; set; }
-        [PasswordPropertyText]
+        [DataType(DataType.Password)]
         [Required(ErrorMessage = "La clave es obligatoria.")]
         public string Clave { get; set; }
         public bool Recordarme { get; set; }

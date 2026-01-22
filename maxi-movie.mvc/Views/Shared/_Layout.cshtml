@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Usuario> SignInManager
+
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8" />
@@ -53,6 +56,28 @@
                         </li>
                     </ul>
                 </div>
+                <ul class="navbar-nav flex-grow">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-outline-primary" asp-area="" asp-controller="Usuario" asp-action="Perfil">Perfil</a>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-area="" asp-controller="Usuario" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-link nav-link text-light">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Usuario" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Usuario" asp-action="Registro">Registro</a>
+                        </li>
+                    }
+                </ul>
             </div>
         </nav>
     </header>
