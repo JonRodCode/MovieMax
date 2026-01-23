@@ -138,6 +138,27 @@
 </main>
 
 
+@{
+    var reviewViewModel = new ReviewCreateViewModel
+    {
+        PeliculaId = Model.Id,
+        PeliculaTitulo = Model.Titulo
+    };
+}
+
+<partial name="~/Views/Review/_CreateReview.cshtml" model="reviewViewModel" />
+
+@* Modal LLM *@
+@{
+    var llmViewModel = new ModalLlmViewModel
+    {
+        Tipo = "",
+        Pelicula = Model.Titulo,
+        SpoilerResumen = ""
+    };
+}
+<partial name="~/Views/Home/_ModalLlm.cshtml" model="llmViewModel" />
+
 <style>
     .star-filled {
         color: #ffc107;

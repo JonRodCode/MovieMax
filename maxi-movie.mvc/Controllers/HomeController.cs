@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace maxi_movie.mvc.Controllers
 {
@@ -66,7 +67,16 @@ namespace maxi_movie.mvc.Controllers
         {
             var pelicula = _context.Peliculas
                 .Include(p => p.Genero)
+                .Include(p => p.ListaReviews)
+                .ThenInclude(r => r.Usuario)
                 .FirstOrDefault(p => p.Id == Id);
+
+            ViewBag.UserReview = false;
+            if (User?.Identity?.IsAuthenticated ==true && pelicula.ListaReviews != null)
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                ViewBag.UserReview = !(pelicula.ListaReviews.FirstOrDefault(r => r.UsuarioId == userId) == null);
+            }
 
             return View(pelicula);
         }
