@@ -48,15 +48,32 @@ builder.Services.ConfigureApplicationCookie(o =>
 builder.Services.AddScoped<ImagenStorage>();
 builder.Services.Configure<FormOptions>(o => { o.MultipartBodyLengthLimit = 2 * 1024 * 1024; });
 
+//Servicios de email
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+//Servicio LLM
+//uilder.Services.AddScoped<LlmService>();
+
 var app = builder.Build();
 
-//invocar la ejecucion dek dbseeder con un using scope
+//invocar la ejecucion del dbseeder con un using scope
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<MovieDbContext>();
-
-    await DbSeeder.Seed(context);
+    try
+    {
+        var context = services.GetRequiredService<MovieDbContext>();
+        var userManager = services.GetRequiredService<UserManager<Usuario>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbSeeder.Seed(context, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        // Log errors or handle them as needed
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred seeding the DB.");
+    }
 }
 
 // Configure the HTTP request pipeline.

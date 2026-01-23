@@ -46,7 +46,7 @@ namespace maxi_movie.mvc.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Registro(UsuarioViewModel usuario)
+        public async Task<IActionResult> Registro(RegistroViewModel usuario)
         {
             if (ModelState.IsValid)
             {
@@ -56,7 +56,7 @@ namespace maxi_movie.mvc.Controllers
                     Email = usuario.Email,
                     Nombre = usuario.Nombre,
                     Apellido = usuario.Apellido,
-                    ImagenUrlPerfil = "default-profile.png"
+                    ImagenUrlPerfil = "/images/default-avatar.png"
                 };
                 var resultado = _userManager.CreateAsync(nuevoUsuario, usuario.Clave);
                 if (resultado.Result.Succeeded)
